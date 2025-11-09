@@ -30,6 +30,16 @@ def home():
 
 @app.route('/tasks', methods = ['GET'])
 def get_tasks():
+    """タスク一覧取得(フィルタリング対応)"""
+    status = request.args.get('status')
+
+    if status == 'completed':
+        filtered_tasks = [task for task in tasks if task['completed']]
+        return jsonify({"tasks": filtered_tasks})
+    elif status == 'incomplete':
+        filtered_tasks = [task for task in tasks if not task['completed']]
+        return jsonify({"tasks": filtered_tasks})
+
     return jsonify({"tasks": tasks})
 
 @app.route('/tasks', methods=['POST'])
@@ -89,6 +99,21 @@ def update_task(task_id):
     # 見つからない場合
     return jsonify({"error": "Task not found"}), 404
 
+@app.route('/tasks/<int:task_id>/toggle', methods=['PATCH'])
+def toggle_task(task_id):
+    """タスクの完了状態を切り替え"""
+    for task in tasks:
+        if task['id'] == task_id:
+            task['completed'] = not task['completed']
+            save_tasks()
+            return jsonify({
+                "message": "Task status toggled",
+                "task": task
+            })
+
+    return jsonify({"error": "Task nof found"}), 404
+
+
 @app.route('/tasks/<int:task_id>', methods=['DELETE'])
 def delete_task(task_id):
     global tasks
@@ -96,7 +121,7 @@ def delete_task(task_id):
     # タスクを検索して削除
     for i, task in enumerate(tasks):
         if task['id'] == task_id:
-            delete_task = tasks.pop(i)
+            deleted_task = tasks.pop(i)
             save_tasks()
             return jsonify({"message": "Task deleted", "task": deleted_task})
 
@@ -105,5 +130,5 @@ def delete_task(task_id):
 
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=5001)
 
