@@ -32,12 +32,17 @@ def home():
 def get_tasks():
     """タスク一覧取得(フィルタリング対応)"""
     status = request.args.get('status')
+    priority = request.args.get('priority')
 
     if status == 'completed':
         filtered_tasks = [task for task in tasks if task['completed']]
         return jsonify({"tasks": filtered_tasks})
     elif status == 'incomplete':
         filtered_tasks = [task for task in tasks if not task['completed']]
+        return jsonify({"tasks": filtered_tasks})
+
+    if priority:
+        filtered_tasks = [task for task in tasks if task.get('priority') == priority]
         return jsonify({"tasks": filtered_tasks})
 
     return jsonify({"tasks": tasks})
@@ -57,7 +62,8 @@ def create_task():
     new_task = {
         "id": task_id_counter,
         "title": data.get("title"),
-        "completed": False
+        "completed": False,
+        "priority": data.get("priority", "medium")
     }
 
     tasks.append(new_task)
@@ -127,6 +133,19 @@ def delete_task(task_id):
 
     # 見つからない場合
     return jsonify({"error": "Task nof found"}), 404
+
+@app.route('/tasks/all', methods=['DELETE'])
+def delete_all_tasks():
+    global tasks
+
+    # タスクの数を数える
+    count = len(tasks)
+    # すべてのタスクを削除
+    tasks = []
+    # ファイルに保存
+    save_tasks()
+    # 結果を返す
+    return jsonify({"message": "ALL tasks deleted", "count": count})
 
 
 if __name__ == '__main__':
