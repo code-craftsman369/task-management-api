@@ -313,5 +313,4 @@ MIT License
 
 ## 👤 作成者
 
-砂畑達也
 - GitHub: [@code-craftsman369](https://github.com/code-craftsman369)
