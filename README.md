@@ -313,4 +313,6 @@ MIT License
 
 ## 👤 作成者
 
+Tatsu - Python Developer
 - GitHub: [@code-craftsman369](https://github.com/code-craftsman369)
+
