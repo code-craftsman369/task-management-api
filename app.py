@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 import json
 import os
 from datetime import datetime
@@ -27,7 +27,7 @@ task_id_counter = max([task['id'] for task in tasks], default=0) + 1
 
 @app.route('/')
 def home():
-    return jsonify({"message": "Task Management API"})
+    return render_template('index.html')
 
 @app.route('/tasks', methods=['GET'])
 def get_tasks():
@@ -83,7 +83,7 @@ def get_tasks():
             reverse=reverse
         )
 
-    return jsonify({"tasks": filtered_tasks})
+    return jsonify(filtered_tasks)
 
 @app.route('/tasks', methods=['POST'])
 def create_task():
