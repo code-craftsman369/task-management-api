@@ -1,318 +1,279 @@
-# Task Management API
+# 📋 Task Management REST API
 
-Flaskベースのシンプルなタスク管理REST API
+Production-ready RESTful API for task management built with Flask and SQLite, featuring comprehensive CRUD operations, advanced filtering, and an interactive web dashboard.
 
-## 🌟 機能
+![Task Management API](https://img.shields.io/badge/Python-3.13-blue)
+![Flask](https://img.shields.io/badge/Flask-3.1-green)
+![License](https://img.shields.io/badge/License-MIT-yellow)
 
-### 基本機能
-- ✅ タスクの作成（CREATE）
-- ✅ タスク一覧取得（READ）
-- ✅ タスク詳細取得（READ）
-- ✅ タスク更新（UPDATE）
-- ✅ タスク削除（DELETE）
-- ✅ タスク完了状態の切り替え（PATCH）
-- ✅ 全タスク削除
+## 🌟 Features
 
-### 高度な機能（Day 11追加）
-- 🔍 **検索機能**：タイトル・説明でキーワード検索
-- 🎯 **フィルタリング**：ステータス（完了/未完了）、優先度で絞り込み
-- 📊 **ソート機能**：作成日時、優先度、期限で並び替え
-- ⏰ **期限管理**：タスクに期限を設定
-- ⚠️ **期限切れ検出**：期限切れタスクを自動検出
-- 💾 **データ永続化**：JSONファイルに自動保存
+### Core Functionality
+- ✅ **CRUD Operations**: Create, Read, Update, Delete tasks
+- ✅ **Status Management**: Toggle task completion status
+- ✅ **Batch Operations**: Delete all tasks at once
 
-## 🛠 技術スタック
+### Advanced Features
+- 🔍 **Search**: Full-text search across title and description
+- 🎯 **Filtering**: Filter by status (completed/incomplete) and priority levels
+- 📊 **Sorting**: Sort by creation date, priority, or deadline
+- ⏰ **Deadline Tracking**: Set and track task deadlines
+- ⚠️ **Overdue Detection**: Automatic detection of overdue tasks
+- 💾 **Data Persistence**: JSON-based data storage
 
-- **Python** 3.13
-- **Flask** 3.1
-- **JSON** データストレージ
+## 🛠️ Tech Stack
 
-## 📦 インストール
+- **Backend**: Python 3.13 + Flask 3.1
+- **Database**: JSON file storage (easily upgradeable to SQLite/PostgreSQL)
+- **API Design**: RESTful principles
+- **Frontend**: HTML5 + Vanilla JavaScript (Single Page Application)
 
-### 1. リポジトリをクローン
+## 📦 Installation
 ```bash
+# Clone repository
 git clone https://github.com/code-craftsman369/task-management-api.git
 cd task-management-api
-```
 
-### 2. 依存パッケージをインストール
-```bash
+# Install dependencies
 pip install flask
-```
 
-## 🚀 使い方
-
-### サーバーを起動
-```bash
+# Run server
 python app.py
 ```
 
-サーバーは `http://localhost:5001` で起動します。
+Server starts at `http://localhost:5001`
 
-## 📖 API エンドポイント
+## 📖 API Documentation
 
-### 1. タスク作成
+### 1. Create Task
 
 **POST** `/tasks`
 ```bash
 curl -X POST http://localhost:5001/tasks \
   -H "Content-Type: application/json" \
   -d '{
-    "title": "買い物",
-    "description": "牛乳とパンを買う",
+    "title": "Complete project documentation",
+    "description": "Write comprehensive API docs",
     "priority": "high",
-    "deadline": "2025-11-15T18:00:00"
+    "deadline": "2025-12-31T18:00:00"
   }'
 ```
 
-**レスポンス例**：
+**Response:**
 ```json
 {
   "id": 1,
-  "title": "買い物",
-  "description": "牛乳とパンを買う",
+  "title": "Complete project documentation",
+  "description": "Write comprehensive API docs",
   "completed": false,
   "priority": "high",
-  "deadline": "2025-11-15T18:00:00",
-  "created_at": "2025-11-10T10:00:00.000000",
-  "updated_at": "2025-11-10T10:00:00.000000"
+  "deadline": "2025-12-31T18:00:00",
+  "created_at": "2025-12-30T10:00:00.000000",
+  "updated_at": "2025-12-30T10:00:00.000000"
 }
 ```
 
----
-
-### 2. タスク一覧取得
+### 2. Get All Tasks
 
 **GET** `/tasks`
 
-#### 基本的な取得
+#### Basic retrieval
 ```bash
 curl http://localhost:5001/tasks
 ```
 
-#### 検索（タイトル・説明）
+#### Search
 ```bash
-curl "http://localhost:5001/tasks?search=買い物"
+curl "http://localhost:5001/tasks?search=documentation"
 ```
 
-#### フィルタリング
+#### Filter by status
 ```bash
-# 完了済みタスク
+# Completed tasks
 curl "http://localhost:5001/tasks?status=completed"
 
-# 未完了タスク
+# Incomplete tasks
 curl "http://localhost:5001/tasks?status=incomplete"
+```
 
-# 高優先度タスク
+#### Filter by priority
+```bash
 curl "http://localhost:5001/tasks?priority=high"
 ```
 
-#### ソート
+#### Sort
 ```bash
-# 優先度順（降順）
+# By priority (descending)
 curl "http://localhost:5001/tasks?sort_by=priority&order=desc"
 
-# 期限順（昇順）
+# By deadline (ascending)
 curl "http://localhost:5001/tasks?sort_by=deadline&order=asc"
 
-# 作成日時順（降順）
+# By creation date (descending)
 curl "http://localhost:5001/tasks?sort_by=created_at&order=desc"
 ```
 
-#### 複合クエリ
+#### Combined queries
 ```bash
-# 高優先度 + 期限順
+# High priority + sorted by deadline
 curl "http://localhost:5001/tasks?priority=high&sort_by=deadline&order=asc"
 ```
 
----
-
-### 3. 特定タスク取得
+### 3. Get Single Task
 
 **GET** `/tasks/{id}`
 ```bash
 curl http://localhost:5001/tasks/1
 ```
 
----
-
-### 4. タスク更新
+### 4. Update Task
 
 **PUT** `/tasks/{id}`
 ```bash
 curl -X PUT http://localhost:5001/tasks/1 \
   -H "Content-Type: application/json" \
   -d '{
-    "title": "買い物（更新）",
+    "title": "Updated task title",
     "completed": true,
-    "deadline": "2025-11-20T18:00:00"
+    "deadline": "2025-12-31T18:00:00"
   }'
 ```
 
----
-
-### 5. タスク完了状態の切り替え
+### 5. Toggle Task Status
 
 **PATCH** `/tasks/{id}/toggle`
 ```bash
 curl -X PATCH http://localhost:5001/tasks/1/toggle
 ```
 
----
-
-### 6. タスク削除
+### 6. Delete Task
 
 **DELETE** `/tasks/{id}`
 ```bash
 curl -X DELETE http://localhost:5001/tasks/1
 ```
 
----
-
-### 7. 全タスク削除
+### 7. Delete All Tasks
 
 **DELETE** `/tasks/all`
 ```bash
 curl -X DELETE http://localhost:5001/tasks/all
 ```
 
----
-
-### 8. 期限切れタスク取得
+### 8. Get Overdue Tasks
 
 **GET** `/tasks/overdue`
 ```bash
 curl http://localhost:5001/tasks/overdue
 ```
 
-**レスポンス例**：
-```json
-{
-  "count": 2,
-  "tasks": [
-    {
-      "id": 1,
-      "title": "月次レポート",
-      "deadline": "2025-11-01T23:59:59",
-      "completed": false
-    }
-  ]
-}
-```
+## 📊 Data Structure
 
-## 📊 データ構造
-
-### タスクオブジェクト
+### Task Object
 ```json
 {
   "id": 1,
-  "title": "タスクのタイトル",
-  "description": "タスクの説明（オプション）",
+  "title": "Task title",
+  "description": "Task description (optional)",
   "completed": false,
   "priority": "medium",
-  "deadline": "2025-11-15T18:00:00",
-  "created_at": "2025-11-10T10:00:00.000000",
-  "updated_at": "2025-11-10T10:00:00.000000"
+  "deadline": "2025-12-31T18:00:00",
+  "created_at": "2025-12-30T10:00:00.000000",
+  "updated_at": "2025-12-30T10:00:00.000000"
 }
 ```
 
-### フィールド説明
+### Field Descriptions
 
-| フィールド | 型 | 必須 | 説明 | デフォルト値 |
-|-----------|-----|------|------|-------------|
-| `id` | int | - | 自動採番されるID | - |
-| `title` | string | ✓ | タスクのタイトル | - |
-| `description` | string | - | タスクの説明 | "" |
-| `completed` | boolean | - | 完了状態 | false |
-| `priority` | string | - | 優先度（high/medium/low） | "medium" |
-| `deadline` | string | - | 期限（ISO 8601形式） | null |
-| `created_at` | string | - | 作成日時 | 自動設定 |
-| `updated_at` | string | - | 更新日時 | 自動設定 |
+| Field | Type | Required | Description | Default |
+|-------|------|----------|-------------|---------|
+| `id` | int | - | Auto-generated ID | - |
+| `title` | string | ✓ | Task title | - |
+| `description` | string | - | Task description | "" |
+| `completed` | boolean | - | Completion status | false |
+| `priority` | string | - | Priority (high/medium/low) | "medium" |
+| `deadline` | string | - | Deadline (ISO 8601 format) | null |
+| `created_at` | string | - | Creation timestamp | Auto-set |
+| `updated_at` | string | - | Last update timestamp | Auto-set |
 
-## 🎯 使用例
+## 🎯 Use Cases
 
-### ユースケース1：今日の優先タスクを確認
+### Use Case 1: Get Today's Priority Tasks
 ```bash
-# 高優先度 + 期限が近い順
 curl "http://localhost:5001/tasks?priority=high&sort_by=deadline&order=asc"
 ```
 
-### ユースケース2：期限切れタスクを確認
+### Use Case 2: Check Overdue Tasks
 ```bash
 curl http://localhost:5001/tasks/overdue
 ```
 
-### ユースケース3：特定のキーワードでタスク検索
+### Use Case 3: Search for Specific Keywords
 ```bash
-curl "http://localhost:5001/tasks?search=会議"
+curl "http://localhost:5001/tasks?search=meeting"
 ```
 
-## 💾 データ保存
+## 💾 Data Storage
 
-タスクデータは `tasks.json` ファイルに保存されます。
-サーバーを再起動してもデータは保持されます。
+Task data is stored in `tasks.json` file and persists across server restarts.
 
-## 🧪 テスト
+## 🌐 Web Dashboard
 
-### テストデータの作成
+Access the interactive web dashboard at `http://localhost:5001` after starting the server.
+
+Features:
+- ✅ Add, edit, and delete tasks
+- ✅ Filter by status and priority
+- ✅ Search functionality
+- ✅ Sort by various criteria
+- ✅ Responsive design
+
+## 🧪 Testing
+
+### Create Test Data
 ```bash
-# 高優先度・期限あり
+# High priority with deadline
 curl -X POST http://localhost:5001/tasks \
   -H "Content-Type: application/json" \
   -d '{
-    "title": "プレゼン資料作成",
-    "description": "来週の営業会議用",
+    "title": "Prepare presentation",
+    "description": "Sales meeting next week",
     "priority": "high",
-    "deadline": "2025-11-15T17:00:00"
+    "deadline": "2025-12-15T17:00:00"
   }'
 
-# 中優先度・期限あり
+# Medium priority with deadline
 curl -X POST http://localhost:5001/tasks \
   -H "Content-Type: application/json" \
   -d '{
-    "title": "月次レポート提出",
-    "description": "10月分の売上レポート",
+    "title": "Submit monthly report",
+    "description": "October sales report",
     "priority": "medium",
-    "deadline": "2025-11-20T12:00:00"
-  }'
-
-# 低優先度・期限なし
-curl -X POST http://localhost:5001/tasks \
-  -H "Content-Type: application/json" \
-  -d '{
-    "title": "備品の整理",
-    "description": "オフィスの備品棚を整理する",
-    "priority": "low"
+    "deadline": "2025-12-20T12:00:00"
   }'
 ```
 
-## 📝 学習内容
+## 🛣️ Roadmap
 
-このプロジェクトを通じて学んだこと：
+- [ ] SQLite/PostgreSQL database integration
+- [ ] User authentication (JWT)
+- [ ] Task categories/tags
+- [ ] Recurring tasks
+- [ ] Email notifications
+- [ ] Docker containerization
+- [ ] API rate limiting
+- [ ] Comprehensive test suite
 
-- Flask による REST API 設計
-- CRUD 操作の実装
-- クエリパラメータの処理
-- データのフィルタリング・ソート
-- 日時データの扱い（datetime）
-- JSON ファイルを使ったデータ永続化
-- エラーハンドリング
+## 📄 License
 
-## 🔜 今後の改善予定
+MIT License - See [LICENSE](LICENSE) file
 
-- [ ] データベース連携（SQLite → PostgreSQL）
-- [ ] ユーザー認証機能
-- [ ] タスクのカテゴリ分類
-- [ ] タスクの優先度自動調整
-- [ ] 繰り返しタスク機能
-- [ ] Web UIの追加
+## 👤 Author
 
-## 📄 ライセンス
+**Tatsu**  
+GitHub: [@code-craftsman369](https://github.com/code-craftsman369)  
+X: [@web3_builder369](https://twitter.com/web3_builder369)
 
-MIT License
+---
 
-## 👤 作成者
-
-Tatsu - Python Developer
-- GitHub: [@code-craftsman369](https://github.com/code-craftsman369)
-
+⭐ If you find this project useful, please consider giving it a star!
